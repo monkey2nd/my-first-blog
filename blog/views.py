@@ -32,9 +32,15 @@ def post_edit(request,pk):
     post = get_object_or_404(Post,pk=pk)
     if request.method == "POST":
         form = PostForm(request.POST,instance=post)
+        #instance：代入値と考えればよくinstanceのみはそのオブジェクトでフォームを作成
+        # instanceの前に引数がある場合はそのデータを使ってフォームに値を設定する
+        # ちなみにこの地点ではまだセーブはしていない
+        # instanceがなければ元のものと一緒という事がわからない
         # フォームを保存するとき
         if form.is_valid():
             post = form.save(commit=False)
+            # formの時点ではタイトルとテキストしかいじれないため
+            # ここで一度セーブをしないでモデルオブジェクトを呼ぶ必要あり
             post.author = request.user
             post.publiished_date = timezone.now()
             post.save()
